@@ -1,62 +1,68 @@
+import {
+    SLACK_TOKEN
+} from "../config/slack";
+import Slack from "slack";
+
 export class Message {
 
-    constructor({
-        id,
-        cache,
-        client,
-        workspaceId,
-    }) {
-        this.id = id;
-        this.workspaceId = workspaceId;
-        this.cache = cache;
-        this.client = client;
+    constructor(channel_id) {
+        this.channel_id = channel_id;
+        this.slack = new Slack({
+            token: SLACK_TOKEN
+        })
     }
 
-    cacheKey(...parts) {
-        return [`channel#${this.workspaceId}#${this.id}`].concat(parts).join(':');
-    }
-
-    async post(message) {
-        const res = await this.client.chat.postMessage({
-            channel: this.id,
-            ...message.toJSON(),
-        });
-        return res;
-    }
-
-    async update(ts, message) {
-        const res = await this.client.chat.update({
-            ts,
-            channel: this.id,
-            ...message.toJSON(),
-        });
-        return res;
-    }
-
-    async rollup(message, {
-        postNewIf = true,
-        forceNew = false
-    } = {}) {
-        const cacheKey = this.cacheKey(message.identifier);
-
-        const {
-            ts
-        } = (await this.cache.get(cacheKey)) || {};
-
-        if (!forceNew && ts) {
-            return this.update(ts, message);
-        } else if (postNewIf) {
-            const res = await this.post(message);
-            await this.cache.set(cacheKey, {
-                ts: res.ts,
-                channel: this.id
+    /**
+     * 
+     * @param {strign} message_value 
+     */
+    async sendMessage(message_value) {
+        let res;
+        try {
+            res = await this.slack.chat.postMessage({
+                channel: this.channel_id,
+                text: message_value
             });
-            return res;
+        } catch (error) {
+            console.log(error.data);
         }
+        return res;
     }
 
-    get chat() {
-        return this.client.chat;
+    /**
+     * 
+     * @param {string} emoji 
+     */
+    async SendMessageWithEmoji(emoji) {
+        let res;
+        try {
+            res = await this.slack.chat.postMessage({
+                channel: this.channel_id,
+                text: `:${emoji}:`
+            });
+        } catch (error) {
+            console.log(error.data);
+        }
+        return res;
+    }
+
+    /**
+     * 
+     * @param {*} ts 
+     * @param {*} message 
+     */
+    async updateMessage(ts, message) {
+        let res;
+        try {
+            res = await this.slack.chat.update({
+                ts,
+                channel: this.channel_id,
+                ...message.toJSON(),
+            });
+        } catch (error) {
+            console.log(error.data);
+        }
+        return res;
     }
 
 };

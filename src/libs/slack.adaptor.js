@@ -1,3 +1,4 @@
+const SlackStrategy = require("@aoberoi/passport-slack").default.Strategy;
 import {
     createEventAdapter
 } from "@slack/events-api";
@@ -5,14 +6,10 @@ import {
     SLACK_CLIENT_ID,
     SLACK_CLIENT_SECRET,
     SLACK_SIGNING_SECRET
-} from '../../config/slack'
-import {
-    WebClient
-} from "@slack/web-api";
+} from "../config/slack";
 import {
     AuthUserModel
 } from "../models/auth.class";
-const SlackStrategy = require('@aoberoi/passport-slack').default.Strategy;
 
 /**
  * 
@@ -63,74 +60,5 @@ export function slackEventLogic(req, res, slackEvents) {
 
     slackEvents.on('error', (error) => {
         console.error(`An error occurred while handling a Slack event: ${error.message}`);
-    });
-}
-
-/**
- * Show user by team Id value
- * 
- * @param {*} teamId 
- * @private
- */
-function getClientByTeamId(teamId) {
-    const clients = {};
-    if (!clients[teamId] && authTable.getTeamId()) {
-        clients[teamId] = new WebClient(authTable.getTeamId());
-    }
-    if (clients[teamId]) {
-        return clients[teamId];
-    }
-    return null;
-}
-
-/**
- * 
- * @param {*} message_value 
- * @param {*} message_object 
- * @param {*} slack_object 
- */
-async function SendMessage(message_value, message_object, slack_object) {
-    try {
-        await slack_object.chat.postMessage({
-            channel: message_object.channel,
-            text: message_value
-        });
-    } catch (error) {
-        console.log(error.data);
-    }
-}
-
-/**
- * 
- * @param {*} message_value 
- * @param {*} message_object 
- * @param {*} slack_object 
- */
-async function SendMessageWithEmoji(emoji, slack_object) {
-    try {
-        await slack_object.chat.postMessage({
-            channel: event.item.channel,
-            text: `:${emoji}:`
-        });
-    } catch (error) {
-        console.log(error.data);
-    }
-}
-
-/**
- * 
- * @param {*} context 
- * @param {*} message 
- * @param {*} prMessage 
- * @param {*} slack_object 
- */
-async function updateMessage(message, slack_object) {
-    const {
-        value,
-        channel
-    } = message;
-    await slack_object.chat.update({
-        value,
-        channel
     });
 }

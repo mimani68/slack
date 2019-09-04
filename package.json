@@ -2,25 +2,36 @@
   "name": "tehran_digital_slack",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./bin/www",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "start": "node --use-strict --experimental-modules --turbo-move-optimization --memory-reducer index.js",
-    "watch": "./node_modules/bin/nodemon index.js",
-    "debug": "./node_modules/bin/nodemon -L --inspect=0.0.0.0:9222 index.js",
+    "clean": "rm -rf ./dist",
+    "build": "npm run clean; babel ./src --out-dir dist --copy-files",
+    "start": "npm run build; node ./dist/bin/www",
+    "watch": "npm run build; ./node_modules/.bin/nodemon ./dist/bin/www",
+    "debug": "npm run build; ./node_modules/.bin/nodemon -L --inspect=0.0.0.0:9222 ./src/bin/www",
+    "serve": "node --use-strict --turbo-move-optimization --memory-reducer dist/bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Mahdi Imani <imani.mahdi@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "@aoberoi/passport-slack": "^1.0.5",
-    "@slack/events-api": "^2.2.0",
+    "@slack/events-api": "^2.3.0",
     "@slack/web-api": "^5.0.0",
     "dotenv": "^4.0.0",
     "express": "^4.17.1",
     "passport": "^0.3.2",
-    "slack": "^11.0.2"
+    "slack": "^11.0.2",
+    "spdy": "^4.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "nodemon": "^1.19.2"
   }
 }

@@ -1,40 +1,48 @@
-import { SLACK_TOKEN } from "../../config/slack";
+import { SLACK_TOKEN } from "../config/slack";
 import Slack from "slack";
 
 export class Channel {
 
     constructor() {
-        this.token = SLACK_TOKEN;
-        this.slack = new Slack({useElectronNet:true})
+        this.slack = new Slack({
+            token: SLACK_TOKEN
+        })
     }
 
+    /**
+     * 
+     * @param {*} channel_name 
+     */
     async createChannel(channel_name) {
-        const token = this.token;
         return await this.slack.channels.create({
-            token,
             channel_name
         });
     }
 
+    /**
+     * 
+     * @returns Promise<any>
+     */
     async getAllChannelList() {
-        const token = this.token;
-        return await this.slack.channels.listChannel({
-            token
-        });
+        return await this.slack.channels.listChannel();
     }
 
+    /**
+     * 
+     * @param {*} channel_name 
+     * @returns Promise<any>
+     */
     async leaveChannel(channel_name) {
-        const token = this.token;
         return await this.slack.channels.leave({
-            token,
             channel_name
         });
     }
 
+    /**
+     * @returns Promise<any>
+     */
     async joinChannel() {
-        const token = this.token;
         return await this.slack.channels.join({
-            token,
             channel_name
         });
     }

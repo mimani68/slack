@@ -3,3 +3,5 @@
 *.git*
 *test*
 *README*
+*dist*
+package-lock.json

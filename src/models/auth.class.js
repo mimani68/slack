@@ -1,4 +1,4 @@
-import { authTable } from "../../db/auth.db";
+import { authTable } from "../db/auth.db";
 
 export class AuthUserAuthModel {
 
